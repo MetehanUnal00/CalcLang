@@ -8,33 +8,33 @@ Group Members:
 
 ## Syntax
 
-<program> ::= <statement>+
+\<program\> ::= \<statement\>+
 
-<statement> ::= <assignment> | <expression> | <function>
+\<statement\> ::= \<assignment\> | \<expression\> | \<function\>
 
-<assignment> ::= <identifier> "=" <expression> ";"
+\<assignment\> ::= \<identifier\> "=" \<expression\> ";"
 
-<expression> ::= <term> | <expression> "+" <term> | <expression> "-" <term>
+\<expression\> ::= \<term\> | \<expression\> "+" \<term\> | \<expression\> "-" \<term\>
 
-<term> ::= <factor> | <term> "*" <factor> | <term> "/" <factor>
+\<term\> ::= \<factor\> | \<term\> "*" \<factor\> | \<term\> "/" <factor\>
 
-<factor> ::= <number> | <identifier> | "(" <expression> ")" | <function>
+\<factor\> ::= \<number\> | \<identifier\> | "(" \<expression\> ")" | \<function\>
 
-<function> ::= <function_name> "(" <expression> ")"
+\<function\> ::= \<function_name\> "(" \<expression\> ")"
 
-<function_name> ::= "sin" | "cos" | "tan" | "sqrt" | "log" | "exp"
+\<function_name\> ::= "sin" | "cos" | "tan" | "sqrt" | "log" | "exp"
 
-<number> ::= <integer> | <float>
+\<number\> ::= \<integer\> | \<float\>
 
-<integer> ::= <digit>+
+\<integer\> ::= \<digit\>+
 
-<float> ::= <digit>+ "." <digit>+
+\<float\> ::= \<digit\>+ "." \<digit\>+
 
-<identifier> ::= <letter> (<letter> | <digit>)*
+\<identifier\> ::= \<letter\> (\<letter\> | \<digit\>)*
 
-<letter> ::= "A" | "B" | ... | "Z" | "a" | "b" | ... | "z"
+\<letter\> ::= "A" | "B" | ... | "Z" | "a" | "b" | ... | "z"
 
-<digit> ::= "0" | "1" | ... | "9"
+\<digit\> ::= "0" | "1" | ... | "9"
 
 ## Explanations about the language
 Design:
