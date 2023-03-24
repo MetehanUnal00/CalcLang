@@ -1,6 +1,8 @@
-# Programming Language Mrt
+# Programming Language CalcLang
 Group Members: 
+
 20190808022 - Metehan Ünal
+
 20190808059 - Utkan Ulaş Yurttaş
 
 
