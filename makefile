@@ -12,8 +12,8 @@ $(TARGET): lex.yy.c
 lex.yy.c: $(SRC)
 	$(LEX) $(SRC)
 
-run-example: $(TARGET) example.txt
-	./$(TARGET) < example.txt
+run-example: $(TARGET) example.clg
+	./$(TARGET) < example.clg
 
 clean:
 	rm -f $(TARGET) lex.yy.c
