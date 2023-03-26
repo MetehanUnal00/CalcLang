@@ -1,3 +1,4 @@
 x = 5.5;
 y = 2;
 z = x * y + sqrt(x) - log(y);
+print("asd");

@@ -25,6 +25,15 @@ COM    \/\*([^*]|\*+[^*\/])*\*+\/
 "/"             { printf("DIVIDE\n"); }
 "%"             { printf("MODULO\n"); }
 "="             { printf("ASSIGN\n"); }
+"=="            { printf("EQUAL\n"); }
+"!="            { printf("NOTEQUAL\n"); }
+"<"             { printf("LESS\n"); }
+"<="            { printf("LESSEQUAL\n"); }
+">"             { printf("GREATER\n"); }
+">="            { printf("GREATEREQUAL\n"); }
+"&&"            { printf("AND\n"); }
+"\|\|"          { printf("OR\n"); }
+"!"             { printf("NOT\n"); }
 "("             { printf("LPAREN\n"); }
 ")"             { printf("RPAREN\n"); }
 "["             { printf("LBRACKET\n"); }
@@ -33,6 +42,20 @@ COM    \/\*([^*]|\*+[^*\/])*\*+\/
 "}"             { printf("RBRACE\n"); }
 ","             { printf("COMMA\n"); }
 ";"             { printf("SEMICOLON\n"); }
+"\""            { printf("QUOTE\n"); }
+
+"if"            { printf("IF\n"); }
+"else"          { printf("ELSE\n"); }
+"while"         { printf("WHILE\n"); }
+"for"           { printf("FOR\n"); }
+"break"         { printf("BREAK\n"); }
+"continue"      { printf("CONTINUE\n"); }
+"return"        { printf("RETURN\n"); }
+"print"         { printf("PRINT\n"); }
+"println"       { printf("PRINTLN\n"); }
+"true"          { printf("TRUE\n"); }
+"false"         { printf("FALSE\n"); }
+"null"          { printf("NULL\n"); }
 
 "pi"            { printf("PI\n"); }
 "e"             { printf("E\n"); }

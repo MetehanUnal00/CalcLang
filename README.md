@@ -10,7 +10,9 @@ Group Members:
 
 \<program\> ::= \<statement\>+
 
-\<statement\> ::= \<assignment\> | \<expression\> | \<function\>
+\<statements\> ::= \<statement\> | \<statement\> \<statements\>
+
+\<statement\> ::= \<assignment\> | \<expression\> | \<function\>| \<if-statement\> | \<while-loop\> | \<io-statement\>
 
 \<assignment\> ::= \<identifier\> "=" \<expression\> ";"
 
@@ -38,16 +40,30 @@ Group Members:
 
 \<constant\> ::= "pi" | "e"
 
+\<if-statement\> ::= "if" "(" \<expression\> ")" "{" \<statements\> "}" ["else" "{" \<statements\> "}"]
+
+\<while-loop\> ::= "while" "(" \<expression\> ")" "{" \<statements\> "}"
+
+\<io-statement\> ::= "print" "(" \<expression\> ")" | "input" "(" \<identifier\> ")"
+
 ## Explanations about the language
 Design:
-MathLang is a programming language designed specifically for mathematical computations. The language supports all basic mathematical operations, as well as advanced mathematical functions.
+CalcLang is a programming language designed specifically for mathematical computations. The language supports all basic mathematical operations, as well as advanced mathematical functions.
+
+The language also supports basic variable types such as numbers, and allows for the assignment of values to variables. Expressions can be grouped using parentheses, and statements must be terminated with a semicolon.
+
+CalcLang provides control structures such as if statements and while loops for more complex computations. Additionally, input/output statements are provided to allow users to interact with their programs.
 
 - Mathematical operations (+, -, *, /)
-- Advanced mathematical functions (sin, cos, tan, sqrt, log, exp)
+- Advanced mathematical functions (sin, cos, tan, sqrt, log, exp, abs, ceil, floor, min, max, derivative, integral)
+- Constants (e, pi)
 - Assignment of values to variables
 - Basic variable types (numbers)
 - Parentheses for grouping expressions
 - Semicolon to end statements
+- Conditional statements (if-else)
+- Looping statements (while-loop)
+- Input/output statements (io-statement)
 
 - You can run your program by running the makefile and running this command:
 
