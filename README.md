@@ -22,7 +22,7 @@ Group Members:
 
 \<function\> ::= \<function_name\> "(" \<expression\> ")"
 
-\<function_name\> ::= "sin" | "cos" | "tan" | "sqrt" | "log" | "exp"
+\<function_name\> ::= "abs" | "sin" | "cos" | "tan" | "sqrt" | "log" | "exp" | "ceil" | "floor" | "min" | "max" | "derivative" | "integral"
 
 \<number\> ::= \<integer\> | \<float\>
 
@@ -35,6 +35,8 @@ Group Members:
 \<letter\> ::= "A" | "B" | ... | "Z" | "a" | "b" | ... | "z"
 
 \<digit\> ::= "0" | "1" | ... | "9"
+
+\<constant\> ::= "pi" | "e"
 
 ## Explanations about the language
 Design:
