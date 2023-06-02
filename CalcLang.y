@@ -1,10 +1,74 @@
 %{
 #include <stdio.h>
 #include <math.h>
-#include "calcLang.tab.h"
+#include "CalcLang.tab.h"
 
 extern int yylex();
 extern int yyerror(const char* msg);
+extern FILE* yyin;
+
+#define MAX_VAR 1000
+
+typedef struct symbol_table {
+    char* name;
+    double value;
+    double (*func)(double);
+} symbol_table;
+typedef struct for_loop {
+    char* init_var;      
+    double init_value;   
+    expr* condition;     
+    char* update_var;    
+    double update_value; 
+    stmt* body;          
+} for_loop;
+typedef struct assign {
+    char* var;
+    double value;
+} assign;
+void execute(stmt* s) {
+    switch (s->type) {
+        // other cases...
+        case FOR_LOOP:
+            for_loop* loop = (for_loop*) s;
+            st_insert(loop->init_var, loop->init_value);
+            while (evaluate(loop->condition)) {
+                execute(loop->body);
+                st_insert(loop->update_var, loop->update_value);
+            }
+            break;
+    }
+}
+
+
+symbol_table st[MAX_VAR];
+int st_len = 0;
+
+void st_insert(char* name, double value, double (*func)(double)) {
+    for (int i = 0; i < st_len; ++i) {
+        if (strcmp(st[i].name, name) == 0) {
+            st[i].value = value;
+            st[i].func = func;
+            return;
+        }
+    }
+    st[st_len].name = strdup(name);
+    st[st_len].value = value;
+    st[st_len].func = func;
+    ++st_len;
+}
+
+double (*st_lookup_func(char* name))(double) {
+    for (int i = 0; i < st_len; ++i) {
+        if (strcmp(st[i].name, name) == 0) {
+            return st[i].func;
+        }
+    }
+    printf("Undefined function: %s\n", name);
+    exit(1);
+}
+
+
 
 double compute_abs(double value) {
     return fabs(value);
@@ -71,12 +135,16 @@ double compute_integral(double (*func)(double), double a, double b, int n) {
 %}
 
 %union {
-    double value;
+    double val;
+    char* identifier;
 }
 
-%token <value> INTEGER
-%token <value> FLOAT
-%token <value> IDENTIFIER
+%token <val> INTEGER
+%token <val> FLOAT
+%type <val> expression
+%token <identifier> IDENTIFIER
+%type <val> program
+
 %token PLUS MINUS MULTIPLY DIVIDE MODULO
 %token ASSIGN EQUAL NOTEQUAL LESS LESSEQUAL GREATER GREATEREQUAL
 %token AND OR NOT
@@ -89,22 +157,51 @@ double compute_integral(double (*func)(double), double a, double b, int n) {
 %left MULTIPLY DIVIDE MODULO
 %nonassoc UMINUS
 
-%type <value> expression
+
 
 %start program
 
 %%
 
-program: /* empty */
+program: /* empty */ { $$ = 0.0; }
        | program statement
        ;
+
+for_init: IDENTIFIER ASSIGN expression { 
+    $$ = malloc(sizeof(assign));
+    $$.var = $1;
+    $$.value = $3; 
+}
+;
+
+for_update: IDENTIFIER ASSIGN expression { 
+    $$ = malloc(sizeof(assign));
+    $$.var = $1;
+    $$.value = $3;
+}
+;
+
+
+statement: FOR LPAREN for_init SEMICOLON expression SEMICOLON for_update RPAREN LBRACE program RBRACE {
+    for_loop* loop = malloc(sizeof(for_loop));
+    loop->init_var = $3.var;
+    loop->init_value = $3.value;
+    loop->condition = $5;
+    loop->update_var = $7.var;
+    loop->update_value = $7.value;
+    loop->body = $10;
+    $$ = loop;
+}
+
 
 statement: expression '\n' { printf("Result: %.2f\n", $1); }
          ;
 
 expression: INTEGER         { $$ = $1; }
           | FLOAT           { $$ = $1; }
-          | IDENTIFIER      { $$ = $1; }
+          | IDENTIFIER {
+    $$ = st_lookup($1);
+}
           | expression PLUS expression      { $$ = $1 + $3; }
           | expression MINUS expression     { $$ = $1 - $3; }
           | expression MULTIPLY expression  { $$ = $1 * $3; }
@@ -112,12 +209,9 @@ expression: INTEGER         { $$ = $1; }
           | expression MODULO expression    { $$ = fmod($1, $3); }
           
           | expression ASSIGN expression {
-                const char* variable = $1;
-                double value = $3;
-                printf("ASSIGN %s = %lf\n", variable, value);
-
-                $$ = value;
-            }
+            st_insert($1, $3);
+            $$ = $3;
+        }
 
           | expression EQUAL expression     { $$ = ($1 == $3) ? 1.0 : 0.0; }
           | expression NOTEQUAL expression  { $$ = ($1 != $3) ? 1.0 : 0.0; }
@@ -140,24 +234,28 @@ expression: INTEGER         { $$ = $1; }
           | FLOOR LPAREN expression RPAREN { $$ = compute_floor($3); }
           | MIN LPAREN expression COMMA expression RPAREN   { $$ = compute_min($3, $5); }
           | MAX LPAREN expression COMMA expression RPAREN   { $$ = compute_max($3, $5); }
-          | DERIVATIVE LPAREN IDENTIFIER COMMA expression COMMA expression RPAREN  { $$ = compute_derivative($3, $5, $7); }
-          | INTEGRAL LPAREN IDENTIFIER COMMA expression COMMA expression COMMA INTEGER RPAREN { $$ = compute_integral($3, $5, $7, $9); }
+| DERIVATIVE LPAREN IDENTIFIER COMMA expression COMMA expression RPAREN {
+    $$ = compute_derivative(st_lookup_func($3), $5, $7);
+}
+| INTEGRAL LPAREN IDENTIFIER COMMA expression COMMA expression COMMA INTEGER RPAREN {
+    $$ = compute_integral(st_lookup_func($3), $5, $7, $9);
+}
 
-          | IF LPAREN expression RPAREN LBRACE program RBRACE ELSE LBRACE program RBRACE {
-                if ($3) {
-                    $$ = $6;
-                }
-                else {
-                    $$ = $10;
-                }
-            }
+        | IF LPAREN expression RPAREN LBRACE program RBRACE ELSE LBRACE program RBRACE {
+    if ($3) {
+        $$ = $6;
+    }
+    else {
+        $$ = $10;
+    }
+}
+| WHILE LPAREN expression RPAREN LBRACE program RBRACE {
+    while ($3) {
+        $6;
+    }
+    $$ = NULL;
+}
 
-          | WHILE LPAREN expression RPAREN LBRACE program RBRACE {
-            while ($3) {
-                $6;
-            }
-            $$ = NULL;
-        }
           | FOR LPAREN expression SEMICOLON expression SEMICOLON expression RPAREN LBRACE program RBRACE {
     for ($3; $5; $7) {
         $10;
@@ -198,10 +296,20 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     yyin = file;
+    
+    // Register functions
+    st_insert("abs", 0, compute_abs);
+    st_insert("sin", 0, compute_sin);
+    st_insert("cos", 0, compute_cos);
+    st_insert("tan", 0, compute_tan);
+    st_insert("log", 0, log);
+    // Add other functions here
+
     yyparse();
     fclose(file);
     return 0;
 }
+
 
 int yyerror(const char* msg) {
     printf("Error: %s\n", msg);

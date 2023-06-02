@@ -1,6 +1,6 @@
 %{
 #include <stdio.h>
-#include "calcLang.tab.h"
+#include "CalcLang.tab.h"
 %}
 
 DIGIT       [0-9]
@@ -15,10 +15,41 @@ COM    \/\*([^*]|\*+[^*\/])*\*+\/
 {WS}            /* ignore whitespace */
 {COM}           /* ignore comments */
 
-{INTEGER}       { yylval.value = atof(yytext); return INTEGER; }
-{FLOAT}         { yylval.value = atof(yytext); return FLOAT; }
+{INTEGER}       { yylval.val = atof(yytext); return INTEGER; }
+{FLOAT}         { yylval.val = atof(yytext); return FLOAT; }
 
-{ID}            { yylval.value = atof(yytext); return IDENTIFIER; }
+
+"if"            { return IF; }
+"else"          { return ELSE; }
+"while"         { return WHILE; }
+"for"           { return FOR; }
+"break"         { return BREAK; }
+"continue"      { return CONTINUE; }
+"return"        { return RETURN; }
+"print"         { return PRINT; }
+"println"       { return PRINTLN; }
+"true"          { return TRUE; }
+"false"         { return FALSE; }
+"null"          { return NULL; }
+
+"pi"            { yylval.val = 3.14159; return PI; }
+"e"             { yylval.val = 2.71828; return E; }
+
+"abs"           { return ABS; }
+"sin"           { return SIN; }
+"cos"           { return COS; }
+"tan"           { return TAN; }
+"sqrt"          { return SQRT; }
+"log"           { return LOG; }
+"exp"           { return EXP; }
+"ceil"          { return CEIL; }
+"floor"         { return FLOOR; }
+"min"           { return MIN; }
+"max"           { return MAX; }
+"derivative"    { return DERIVATIVE; }
+"integral"      { return INTEGRAL; }
+
+{ID}            { yylval.identifier = strdup(yytext); return IDENTIFIER; }
 
 "+"             { return PLUS; }
 "-"             { return MINUS; }
@@ -44,35 +75,5 @@ COM    \/\*([^*]|\*+[^*\/])*\*+\/
 ","             { return COMMA; }
 ";"             { return SEMICOLON; }
 "\""            { return QUOTE; }
-
-"if"            { return IF; }
-"else"          { return ELSE; }
-"while"         { return WHILE; }
-"for"           { return FOR; }
-"break"         { return BREAK; }
-"continue"      { return CONTINUE; }
-"return"        { return RETURN; }
-"print"         { return PRINT; }
-"println"       { return PRINTLN; }
-"true"          { return TRUE; }
-"false"         { return FALSE; }
-"null"          { return NULL; }
-
-"pi"            { yylval.value = 3.14159; return PI; }
-"e"             { yylval.value = 2.71828; return E; }
-
-"abs"           { return ABS; }
-"sin"           { return SIN; }
-"cos"           { return COS; }
-"tan"           { return TAN; }
-"sqrt"          { return SQRT; }
-"log"           { return LOG; }
-"exp"           { return EXP; }
-"ceil"          { return CEIL; }
-"floor"         { return FLOOR; }
-"min"           { return MIN; }
-"max"           { return MAX; }
-"derivative"    { return DERIVATIVE; }
-"integral"      { return INTEGRAL; }
 
 %%
